@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>关于</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 28px;
+      color: #0f172a;
+      background: linear-gradient(135deg, #f8fafc, #e0f2fe);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+    }
+
+    main {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      padding: 24px;
+      border-radius: 22px;
+      color: #fff;
+      background: linear-gradient(135deg, #2563eb, #0891b2);
+      box-shadow: 0 20px 50px rgba(37, 99, 235, 0.22);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 28px;
+    }
+
+    p {
+      margin: 0;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    dl {
+      margin: 0;
+      padding: 6px 0;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.74);
+      box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 14px;
+      padding: 13px 18px;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    dt {
+      color: #64748b;
+    }
+
+    dd {
+      margin: 0;
+      color: #0f172a;
+      word-break: break-all;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      body {
+        color: #e5e7eb;
+        background: linear-gradient(135deg, #020617, #0f172a);
+      }
+
+      dl {
+        background: rgba(15, 23, 42, 0.82);
+      }
+
+      dd {
+        color: #e5e7eb;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="brand">
+      <h1 id="name">WebShell Desktop</h1>
+      <p>桌面客户端运行信息</p>
+    </section>
+
+    <dl>
+      <div class="row"><dt>应用版本</dt><dd id="version"></dd></div>
+      <div class="row"><dt>官网</dt><dd id="homepage"></dd></div>
+      <div class="row"><dt>Electron</dt><dd id="electron"></dd></div>
+      <div class="row"><dt>Chrome</dt><dd id="chrome"></dd></div>
+      <div class="row"><dt>Node.js</dt><dd id="node"></dd></div>
+    </dl>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const setText = (id, fallback = '-') => {
+      document.getElementById(id).textContent = params.get(id) || fallback;
+    };
+
+    setText('name', 'WebShell Desktop');
+    setText('version');
+    setText('homepage');
+    setText('electron');
+    setText('chrome');
+    setText('node');
+  </script>
+</body>
+</html>

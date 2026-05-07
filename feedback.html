@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>问题反馈</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; color: #0f172a; background: #f8fafc; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+    h1 { margin: 0 0 16px; }
+    section { padding: 18px; border-radius: 16px; background: #fff; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
+    label { display: block; margin: 12px 0 6px; color: #475569; }
+    input, textarea { width: 100%; border: 1px solid #cbd5e1; border-radius: 12px; padding: 11px 12px; font: inherit; }
+    textarea { min-height: 180px; resize: vertical; }
+    button { margin: 14px 10px 0 0; border: 0; border-radius: 12px; padding: 11px 16px; color: #fff; background: #2563eb; cursor: pointer; font-weight: 800; }
+    button.secondary { color: #1e293b; background: #e2e8f0; }
+    #status { color: #16a34a; font-weight: 800; }
+    @media (prefers-color-scheme: dark) { body { color: #e5e7eb; background: #020617; } section { background: #0f172a; } label { color: #94a3b8; } input, textarea { color: #e5e7eb; background: #111827; border-color: #334155; } button.secondary { color: #e5e7eb; background: #334155; } }
+  </style>
+</head>
+<body>
+  <h1>问题反馈</h1>
+  <section>
+    <label>联系方式</label>
+    <input id="contact" placeholder="手机号、微信、邮箱或 QQ">
+    <label>问题描述</label>
+    <textarea id="message" placeholder="请描述发生了什么、如何复现、期望结果是什么"></textarea>
+    <button id="submit">复制反馈内容</button>
+    <button class="secondary" id="copy">仅复制诊断摘要</button>
+    <button class="secondary" id="export">导出完整诊断</button>
+    <span id="status"></span>
+  </section>
+  <script>
+    const status = document.getElementById('status');
+    function done(text) { status.textContent = text; setTimeout(() => { status.textContent = ''; }, 2200); }
+    document.getElementById('submit').addEventListener('click', async () => {
+      await window.desktopApi.submitFeedback({ contact: document.getElementById('contact').value, message: document.getElementById('message').value });
+      done('已复制');
+    });
+    document.getElementById('copy').addEventListener('click', async () => { await window.desktopApi.copyDiagnostics(); done('已复制'); });
+    document.getElementById('export').addEventListener('click', () => window.desktopApi.exportDiagnostics());
+  </script>
+</body>
+</html>

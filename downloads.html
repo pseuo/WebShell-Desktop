@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>下载管理器</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 22px; color: #0f172a; background: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; }
+    h1 { margin: 0 0 16px; }
+    .item { margin-bottom: 12px; padding: 14px; border-radius: 14px; background: #fff; box-shadow: 0 8px 24px rgba(15,23,42,.06); }
+    .name { font-weight: 800; margin-bottom: 8px; word-break: break-all; }
+    .meta { color: #64748b; font-size: 13px; line-height: 1.6; word-break: break-all; }
+    .bar { height: 8px; margin: 10px 0; overflow: hidden; border-radius: 999px; background: #e2e8f0; }
+    .bar span { display: block; height: 100%; background: #2563eb; }
+    button { margin: 10px 8px 0 0; border: 0; border-radius: 10px; padding: 9px 12px; color: #fff; background: #2563eb; cursor: pointer; }
+    button.secondary { color: #1e293b; background: #e2e8f0; }
+    .empty { color: #64748b; }
+    @media (prefers-color-scheme: dark) { body { color: #e5e7eb; background: #020617; } .item { background: #0f172a; } .meta, .empty { color: #94a3b8; } button.secondary { color: #e5e7eb; background: #334155; } }
+  </style>
+</head>
+<body>
+  <h1>下载管理器</h1>
+  <div id="list"></div>
+  <script>
+    const list = document.getElementById('list');
+    const size = value => value ? `${(value / 1024 / 1024).toFixed(2)} MB` : '-';
+    const speed = value => value ? `${(value / 1024).toFixed(1)} KB/s` : '-';
+    function render(items) {
+      list.innerHTML = items.length ? '' : '<p class="empty">暂无下载</p>';
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="name"></div><div class="meta"></div><div class="bar"><span style="width:${item.progress || 0}%"></span></div><button class="open">打开文件</button><button class="folder secondary">打开目录</button>`;
+        el.querySelector('.name').textContent = item.fileName;
+        el.querySelector('.meta').textContent = `状态：${item.state} | 进度：${item.progress || 0}% | 已下载：${size(item.receivedBytes)} / ${size(item.totalBytes)} | 速度：${speed(item.speed)} | 来源：${item.sourceUrl}`;
+        el.querySelector('.open').addEventListener('click', () => window.desktopApi.openDownloadedFile(item.savePath));
+        el.querySelector('.folder').addEventListener('click', () => window.desktopApi.showDownloadedFile(item.savePath));
+        list.appendChild(el);
+      });
+    }
+    window.desktopApi.onDownloadsUpdated(render);
+    window.desktopApi.getDownloads().then(render);
+  </script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>版本公告</title>
+  <style>
+    body { margin: 0; min-height: 100vh; padding: 30px; color: #0f172a; background: linear-gradient(135deg,#f8fafc,#e0f2fe); font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+    main { max-width: 680px; margin: auto; padding: 24px; border-radius: 22px; background: rgba(255,255,255,.86); box-shadow: 0 18px 48px rgba(15,23,42,.1); }
+    h1 { margin: 0 0 8px; }
+    .version { color: #64748b; margin-bottom: 18px; }
+    .force { display: none; margin-bottom: 16px; padding: 12px 14px; border-radius: 14px; color: #991b1b; background: #fee2e2; font-weight: 800; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+    button { border: 0; border-radius: 12px; padding: 11px 16px; color: #fff; background: #2563eb; cursor: pointer; font-weight: 800; }
+    button.secondary { color: #1e293b; background: #e2e8f0; }
+    pre { white-space: pre-wrap; line-height: 1.8; font: inherit; }
+    @media (prefers-color-scheme: dark) { body { color: #e5e7eb; background: linear-gradient(135deg,#020617,#0f172a); } main { background: rgba(15,23,42,.86); } .version { color: #94a3b8; } .force { color: #fecaca; background: #7f1d1d; } button.secondary { color: #e5e7eb; background: #334155; } }
+  </style>
+</head>
+<body>
+  <main><h1 id="title"></h1><div class="version" id="version"></div><div class="force" id="force">重要公告，请阅读后按要求处理。</div><pre id="body"></pre><div class="actions"><button id="action"></button><button class="secondary" id="read">我已阅读</button></div></main>
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id') || '';
+    const actionUrl = params.get('actionUrl') || '';
+    document.getElementById('title').textContent = params.get('title') || '版本公告';
+    document.getElementById('version').textContent = `版本：${params.get('version') || '-'}`;
+    document.getElementById('body').textContent = params.get('body') || '暂无公告内容。';
+    document.getElementById('force').style.display = params.get('force') ? 'block' : 'none';
+    document.getElementById('action').textContent = params.get('actionText') || '查看详情';
+    document.getElementById('action').style.display = actionUrl ? 'inline-block' : 'none';
+    document.getElementById('action').addEventListener('click', () => window.desktopApi.openAnnouncementUrl(actionUrl));
+    document.getElementById('read').addEventListener('click', async () => {
+      await window.desktopApi.markAnnouncementRead(id);
+      window.close();
+    });
+  </script>
+</body>
+</html>

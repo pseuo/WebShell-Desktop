@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>健康检查</title>
+  <style>
+    body { margin: 0; padding: 24px; color: #0f172a; background: #f8fafc; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+    h1 { margin-top: 0; }
+    dl { display: grid; grid-template-columns: 180px 1fr; gap: 0; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
+    dt, dd { margin: 0; padding: 13px 16px; border-bottom: 1px solid #e2e8f0; }
+    dt { color: #64748b; background: #f8fafc; }
+    button { margin: 0 10px 16px 0; border: 0; border-radius: 12px; padding: 11px 16px; color: #fff; background: #2563eb; cursor: pointer; font-weight: 700; }
+    @media (prefers-color-scheme: dark) { body { color: #e5e7eb; background: #020617; } dl { background: #0f172a; } dt { color: #94a3b8; background: #111827; } dt,dd { border-color: #1e293b; } }
+  </style>
+</head>
+<body>
+  <h1>健康检查</h1>
+  <button id="refresh">重新检查</button><button id="repair">一键修复并重启</button>
+  <dl id="info"></dl>
+  <script>
+    const labels = { appUrl:'主站地址', network:'网络状态', pageStatus:'页面状态', lastOnlineAt:'最后在线时间', siteReachable:'主站连通性', certificateStatus:'证书状态', responseTimeMs:'响应耗时', startupMs:'启动耗时', lastLoadMs:'最近加载耗时', loadSuccessRate:'最近加载成功率', recentLoads:'最近加载记录', proxy:'代理环境', permissionEvents:'权限访问记录', cacheNote:'缓存大小', logSize:'日志大小', electron:'Electron', chrome:'Chrome', node:'Node.js', license:'许可证', remoteConfig:'远程配置' };
+    function valueText(value) { return typeof value === 'object' ? JSON.stringify(value) : String(value ?? '-'); }
+    async function load() {
+      const data = await window.desktopApi.getHealth();
+      document.getElementById('info').innerHTML = Object.entries(data).map(([key,value]) => `<dt>${labels[key] || key}</dt><dd>${valueText(value)}</dd>`).join('');
+    }
+    document.getElementById('refresh').addEventListener('click', load);
+    document.getElementById('repair').addEventListener('click', () => window.desktopApi.repairRestart());
+    load();
+  </script>
+</body>
+</html>

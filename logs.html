@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>日志查看器</title>
+  <style>
+    body { margin: 0; padding: 18px; color: #0f172a; background: #f8fafc; font-family: ui-monospace, SFMono-Regular, Consolas, monospace; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; }
+    h1 { margin: 0; font-size: 22px; }
+    button { border: 0; border-radius: 10px; padding: 10px 14px; color: #fff; background: #2563eb; cursor: pointer; }
+    pre { min-height: calc(100vh - 82px); margin: 0; padding: 14px; border-radius: 14px; background: #0f172a; color: #d1d5db; overflow: auto; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <header><h1>日志查看器</h1><button id="refresh">刷新</button></header>
+  <pre id="logs">加载中...</pre>
+  <script>
+    async function load() { document.getElementById('logs').textContent = await window.desktopApi.getLogs() || '暂无日志'; }
+    document.getElementById('refresh').addEventListener('click', load);
+    load();
+  </script>
+</body>
+</html>
