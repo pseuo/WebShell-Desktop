@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>通知中心</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 22px; color: #0f172a; background: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; }
+    h1 { margin: 0 0 16px; }
+    .item { margin-bottom: 12px; padding: 14px; border-radius: 14px; background: #fff; box-shadow: 0 8px 24px rgba(15,23,42,.06); }
+    .meta { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 8px; color: #64748b; font-size: 13px; }
+    .title { font-weight: 800; margin-bottom: 6px; }
+    .empty { color: #64748b; }
+    @media (prefers-color-scheme: dark) { body { color: #e5e7eb; background: #020617; } .item { background: #0f172a; } .meta, .empty { color: #94a3b8; } }
+  </style>
+</head>
+<body>
+  <h1>通知中心</h1>
+  <div id="list"></div>
+  <script>
+    const list = document.getElementById('list');
+    function render(items) {
+      list.innerHTML = items.length ? '' : '<p class="empty">暂无通知</p>';
+      items.forEach(item => {
+        const el = document.createElement('div');
+        el.className = 'item';
+        el.innerHTML = `<div class="meta"><span>${item.type}</span><span>${new Date(item.time).toLocaleString()}</span></div><div class="title"></div><div class="body"></div>`;
+        el.querySelector('.title').textContent = item.title;
+        el.querySelector('.body').textContent = item.body;
+        list.appendChild(el);
+      });
+    }
+    window.desktopApi.onNotificationsUpdated(render);
+    window.desktopApi.getNotifications().then(render);
+  </script>
+</body>
+</html>

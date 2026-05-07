@@ -1,13 +1,22 @@
 {
-  "name": "NoLiarAI",
+  "name": "webshell-desktop",
   "version": "1.0.0",
-  "description": "NoLiarAI",
+  "description": "An open-source Electron desktop shell for remote web applications.",
   "main": "main.js",
   "homepage": "",
   "build": {
-    "appId": "com.boxrom.ai",
-    "productName": "谎伴智能助手",
+    "appId": "io.github.webshell.desktop",
+    "productName": "WebShell Desktop",
     "asar": true,
+    "files": [
+      "main.js",
+      "preload.js",
+      "*.html",
+      "default.license",
+      "manifest.json",
+      "favicon.*",
+      "package.json"
+    ],
     "directories": {
       "buildResources": "build",
       "output": "dist"
@@ -21,7 +30,7 @@
       "icon": "favicon.icns"
     },
     "dmg": {
-      "title": "谎伴智能助手",
+      "title": "WebShell Desktop",
       "icon": "favicon.png"
     },
     "win": {
@@ -50,6 +59,11 @@
   },
   "scripts": {
     "start": "electron .",
+    "keypair": "node tools/generate-keypair.js",
+    "license:generate": "node tools/generate-license.js",
+    "config:sign": "node tools/sign-remote-config.js",
+    "release-notes:generate": "node tools/generate-release-notes.js",
+    "manifest:generate": "node tools/generate-manifest.js",
     "dist-win": "electron-builder --win --x64",
     "dist-linux": "electron-builder --linux --x64"
   },
@@ -64,11 +78,12 @@
   "author": "LingPort",
   "license": "ISC",
   "dependencies": {
+    "electron-updater": "^6.3.9",
     "electron-localshortcut": "^3.2.1",
     "qiao-is-online": "^1.0.6"
   },
   "devDependencies": {
-    "electron": "^26.1.0",
-    "electron-builder": "^24.6.3"
+    "electron": ">=40.0.0",
+    "electron-builder": "^26.0.0"
   }
 }

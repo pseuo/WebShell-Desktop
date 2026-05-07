@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>自动更新</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; color: #0f172a; background: radial-gradient(circle at top left, #dbeafe, #f8fafc 48%); font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+    h1 { margin: 0 0 16px; }
+    .card { padding: 20px; border-radius: 18px; background: rgba(255,255,255,.92); box-shadow: 0 16px 38px rgba(15,23,42,.1); }
+    .status { margin-bottom: 12px; color: #475569; font-weight: 700; }
+    .bar { overflow: hidden; height: 14px; border-radius: 999px; background: #e2e8f0; }
+    .fill { width: 0; height: 100%; border-radius: inherit; background: linear-gradient(90deg,#2563eb,#06b6d4); transition: width .2s ease; }
+    .meta { margin: 14px 0; color: #64748b; line-height: 1.7; white-space: pre-wrap; }
+    .error { color: #dc2626; }
+    button { margin: 8px 8px 0 0; border: 0; border-radius: 12px; padding: 11px 16px; color: #fff; background: #2563eb; cursor: pointer; font-weight: 800; }
+    button.secondary { color: #1e293b; background: #e2e8f0; }
+    @media (prefers-color-scheme: dark) { body { color: #e5e7eb; background: radial-gradient(circle at top left,#172554,#020617 52%); } .card { background: rgba(15,23,42,.94); } .status { color: #cbd5e1; } .meta { color: #94a3b8; } .bar { background: #334155; } button.secondary { color: #e5e7eb; background: #334155; } }
+  </style>
+</head>
+<body>
+  <h1>自动更新</h1>
+  <div class="card">
+    <div class="status" id="status">读取更新状态...</div>
+    <div class="bar"><div class="fill" id="fill"></div></div>
+    <div class="meta" id="meta"></div>
+    <button id="check">检查更新</button>
+    <button id="install">立即重启安装</button>
+    <button class="secondary" id="diagnostics">复制诊断摘要</button>
+  </div>
+  <script>
+    const statusEl = document.getElementById('status');
+    const fillEl = document.getElementById('fill');
+    const metaEl = document.getElementById('meta');
+    const install = document.getElementById('install');
+    function render(state) {
+      statusEl.textContent = state.message || state.status || '-';
+      fillEl.style.width = `${state.percent || 0}%`;
+      metaEl.innerHTML = `状态：${state.status || '-'}\n版本：${state.version || '-'}\n进度：${state.percent || 0}%${state.error ? `\n错误：<span class="error">${state.error}</span>` : ''}`;
+      install.style.display = state.status === 'downloaded' ? 'inline-block' : 'none';
+    }
+    document.getElementById('check').addEventListener('click', () => window.desktopApi.checkUpdates());
+    install.addEventListener('click', () => window.desktopApi.installUpdate());
+    document.getElementById('diagnostics').addEventListener('click', () => window.desktopApi.copyDiagnostics());
+    window.desktopApi.onUpdateStateUpdated(render);
+    window.desktopApi.getUpdateState().then(render);
+  </script>
+</body>
+</html>

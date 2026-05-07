@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>设置</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; color: #0f172a; background: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif; }
+    h1 { margin: 0 0 18px; }
+    section { margin-bottom: 18px; padding: 18px; border-radius: 16px; background: #fff; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06); }
+    h2 { margin: 0 0 14px; font-size: 18px; }
+    label { display: block; margin: 12px 0 6px; color: #475569; }
+    input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 10px; color: #0f172a; background: #fff; font: inherit; }
+    textarea { min-height: 82px; resize: vertical; }
+    .check { display: flex; align-items: center; gap: 10px; margin: 12px 0; color: #0f172a; }
+    .check input { width: auto; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+    .actions { display: flex; gap: 10px; flex-wrap: wrap; position: sticky; bottom: 0; padding: 14px 0 0; background: linear-gradient(transparent, #f8fafc 35%); }
+    button { border: 0; border-radius: 12px; padding: 11px 16px; color: #fff; background: #2563eb; cursor: pointer; font-weight: 700; }
+    button.secondary { color: #1e293b; background: #e2e8f0; }
+    #status { color: #16a34a; font-weight: 700; }
+    @media (prefers-color-scheme: dark) { body { color: #e5e7eb; background: #020617; } section { background: #0f172a; } label { color: #94a3b8; } input, select, textarea { color: #e5e7eb; background: #111827; border-color: #334155; } .check { color: #e5e7eb; } .actions { background: linear-gradient(transparent, #020617 35%); } button.secondary { color: #e5e7eb; background: #334155; } }
+  </style>
+</head>
+<body>
+  <h1>设置</h1>
+
+  <section>
+    <h2>启动与窗口</h2>
+    <label>应用名称</label>
+    <input id="appName" placeholder="留空使用默认名称">
+    <label class="check"><input id="autoLaunch" type="checkbox"> 开机自动启动</label>
+    <label class="check"><input id="startMinimized" type="checkbox"> 启动时最小化到托盘</label>
+    <label class="check"><input id="alwaysOnTop" type="checkbox"> 窗口置顶</label>
+    <label class="check"><input id="muted" type="checkbox"> 静音</label>
+    <label>关闭行为</label>
+    <select id="closeBehavior">
+      <option value="tray">关闭到托盘</option>
+      <option value="quit">直接退出</option>
+      <option value="ask">每次询问</option>
+    </select>
+  </section>
+
+  <section>
+    <h2>快捷键和显示</h2>
+    <label>显示/隐藏窗口快捷键</label>
+    <input id="shortcut" placeholder="CommandOrControl+Alt+A">
+    <label>页面缩放</label>
+    <input id="zoomFactor" type="number" min="0.5" max="3" step="0.1">
+    <label class="check"><input id="allowDevTools" type="checkbox"> 正式版允许开发者工具</label>
+    <label>下载完成动作</label>
+    <select id="downloadCompleteAction">
+      <option value="notify">仅通知</option>
+      <option value="openFile">打开文件</option>
+      <option value="openFolder">打开文件夹</option>
+      <option value="none">不提示</option>
+    </select>
+    <label>日志级别</label>
+    <select id="logLevel">
+      <option value="error">error</option>
+      <option value="warn">warn</option>
+      <option value="info">info</option>
+      <option value="debug">debug</option>
+    </select>
+  </section>
+
+  <section>
+    <h2>权限管理</h2>
+    <label class="check"><input class="perm" value="notifications" type="checkbox"> 通知</label>
+    <label class="check"><input class="perm" value="media" type="checkbox"> 摄像头/麦克风</label>
+    <label class="check"><input class="perm" value="clipboard-read" type="checkbox"> 剪贴板读取</label>
+    <label class="check"><input class="perm" value="geolocation" type="checkbox"> 定位</label>
+    <label class="check"><input class="perm" value="midi" type="checkbox"> MIDI</label>
+    <label class="check"><input class="perm" value="display-capture" type="checkbox"> 屏幕共享</label>
+  </section>
+
+  <section>
+    <h2>URL 环境</h2>
+    <label>当前环境</label>
+    <select id="env">
+      <option value="prod">prod</option>
+      <option value="test">test</option>
+      <option value="dev">dev</option>
+    </select>
+    <div class="grid">
+      <div><label>prod URL</label><input id="urlProd"></div>
+      <div><label>test URL</label><input id="urlTest"></div>
+      <div><label>dev URL</label><input id="urlDev"></div>
+      <div><label>强制覆盖 URL</label><input id="appUrl" placeholder="留空则按环境选择"></div>
+    </div>
+    <label>URL 白名单 Origin，每行一个，例如 https://example.com</label>
+    <textarea id="allowedOrigins"></textarea>
+    <label class="check"><input id="remoteConfigEnabled" type="checkbox"> 启用远程配置</label>
+    <label>远程配置 URL</label>
+    <input id="remoteConfigUrl" placeholder="https://example.com/config.json">
+    <label>许可证密钥</label>
+    <input id="licenseKey" placeholder="请输入许可证密钥">
+    <label>许可证过期时间</label>
+    <input id="licenseExpiresAt" type="date">
+    <label>许可证服务端校验 URL</label>
+    <input id="licenseServerUrl" placeholder="https://example.com/license/validate">
+    <label>授权离线宽限天数</label>
+    <input id="licenseOfflineGraceDays" type="number" min="0" step="1">
+    <label>灰度分组</label>
+    <input id="rolloutGroup" placeholder="stable / beta / internal">
+    <label>更新渠道</label>
+    <select id="updateChannel">
+      <option value="stable">stable</option>
+      <option value="beta">beta</option>
+      <option value="dev">dev</option>
+    </select>
+  </section>
+
+  <section>
+    <h2>维护</h2>
+    <div class="actions">
+      <button id="save">保存设置</button>
+      <button class="secondary" id="feedback">问题反馈</button>
+      <button class="secondary" id="startup">打开开机启动设置</button>
+      <button class="secondary" id="importSettings">导入设置</button>
+      <button class="secondary" id="exportSettings">导出设置</button>
+      <button class="secondary" id="clearCache">清理缓存并重启</button>
+      <button class="secondary" id="repair">一键修复并重启</button>
+      <button class="secondary" id="remoteConfig">同步远程配置</button>
+      <button class="secondary" id="remoteConfigCenter">配置中心</button>
+      <button class="secondary" id="licenseCenter">授权中心</button>
+      <button class="secondary" id="importLicense">导入本地授权</button>
+      <button class="secondary" id="clearLicense">清除本地授权</button>
+      <button class="secondary" id="clearUniversalLicense">清除通用授权</button>
+      <button class="secondary" id="licenseRequest">导出授权申请</button>
+      <button class="secondary" id="updates">检查更新</button>
+      <button class="secondary" id="diagnostics">导出诊断信息</button>
+      <button class="secondary" id="diagnosticsPackage">导出诊断包</button>
+      <span id="status"></span>
+    </div>
+  </section>
+
+  <script>
+    let settings;
+    const $ = id => document.getElementById(id);
+    const setChecked = (id, value) => { $(id).checked = Boolean(value); };
+
+    function fill(value) {
+      settings = value;
+      $('appName').value = value.appName || '';
+      $('env').value = value.env;
+      $('urlProd').value = value.urls.prod || '';
+      $('urlTest').value = value.urls.test || '';
+      $('urlDev').value = value.urls.dev || '';
+      $('appUrl').value = value.appUrl || '';
+      $('allowedOrigins').value = (value.allowedOrigins || []).join('\n');
+      $('shortcut').value = value.shortcut || '';
+      $('zoomFactor').value = value.zoomFactor || 1;
+      $('downloadCompleteAction').value = value.downloadCompleteAction || 'notify';
+      $('logLevel').value = value.logLevel || 'info';
+      $('closeBehavior').value = value.closeBehavior || 'tray';
+      $('remoteConfigUrl').value = value.remoteConfigUrl || '';
+      $('licenseKey').value = value.licenseKey || '';
+      $('licenseExpiresAt').value = value.licenseExpiresAt || '';
+      $('licenseServerUrl').value = value.licenseServerUrl || '';
+      $('licenseOfflineGraceDays').value = value.licenseOfflineGraceDays ?? 7;
+      $('rolloutGroup').value = value.rolloutGroup || 'stable';
+      $('updateChannel').value = value.updateChannel || 'stable';
+      setChecked('autoLaunch', value.autoLaunch);
+      setChecked('startMinimized', value.startMinimized);
+      setChecked('alwaysOnTop', value.alwaysOnTop);
+      setChecked('muted', value.muted);
+      setChecked('allowDevTools', value.allowDevTools);
+      setChecked('remoteConfigEnabled', value.remoteConfigEnabled);
+      document.querySelectorAll('.perm').forEach(input => { input.checked = (value.permissions || []).includes(input.value); });
+    }
+
+    function collect() {
+      return {
+        ...settings,
+        appName: $('appName').value.trim(),
+        env: $('env').value,
+        urls: { prod: $('urlProd').value.trim(), test: $('urlTest').value.trim(), dev: $('urlDev').value.trim() },
+        appUrl: $('appUrl').value.trim(),
+        allowedOrigins: $('allowedOrigins').value.split('\n').map(item => item.trim()).filter(Boolean),
+        shortcut: $('shortcut').value.trim(),
+        zoomFactor: Number($('zoomFactor').value) || 1,
+        downloadCompleteAction: $('downloadCompleteAction').value,
+        logLevel: $('logLevel').value,
+        closeBehavior: $('closeBehavior').value,
+        autoLaunch: $('autoLaunch').checked,
+        startMinimized: $('startMinimized').checked,
+        alwaysOnTop: $('alwaysOnTop').checked,
+        muted: $('muted').checked,
+        allowDevTools: $('allowDevTools').checked,
+        permissions: Array.from(document.querySelectorAll('.perm:checked')).map(input => input.value),
+        remoteConfigEnabled: $('remoteConfigEnabled').checked,
+        remoteConfigUrl: $('remoteConfigUrl').value.trim(),
+        licenseKey: $('licenseKey').value.trim(),
+        licenseExpiresAt: $('licenseExpiresAt').value,
+        licenseServerUrl: $('licenseServerUrl').value.trim(),
+        licenseOfflineGraceDays: Number($('licenseOfflineGraceDays').value) || 0,
+        rolloutGroup: $('rolloutGroup').value.trim() || 'stable',
+        updateChannel: $('updateChannel').value
+      };
+    }
+
+    $('save').addEventListener('click', async () => {
+      fill(await window.desktopApi.saveSettings(collect()));
+      $('status').textContent = '已保存';
+      setTimeout(() => { $('status').textContent = ''; }, 1800);
+    });
+    $('feedback').addEventListener('click', () => window.desktopApi.showFeedback());
+    $('startup').addEventListener('click', () => window.desktopApi.openStartupSettings());
+    $('importSettings').addEventListener('click', async () => fill(await window.desktopApi.importSettings()));
+    $('exportSettings').addEventListener('click', () => window.desktopApi.exportSettings());
+    $('clearCache').addEventListener('click', () => window.desktopApi.clearCacheRestart());
+    $('repair').addEventListener('click', () => window.desktopApi.repairRestart());
+    $('remoteConfig').addEventListener('click', () => window.desktopApi.fetchRemoteConfig());
+    $('remoteConfigCenter').addEventListener('click', () => window.desktopApi.showRemoteConfig());
+    $('licenseCenter').addEventListener('click', () => window.desktopApi.showLicense());
+    $('importLicense').addEventListener('click', async () => { const result = await window.desktopApi.importLocalLicense(); $('status').textContent = result.reason || '已导入'; });
+    $('clearLicense').addEventListener('click', async () => { const result = await window.desktopApi.clearLocalLicense(); $('status').textContent = result.reason || '已清除'; });
+    $('clearUniversalLicense').addEventListener('click', async () => { const result = await window.desktopApi.clearUniversalLicense(); $('status').textContent = result.reason || '已清除'; });
+    $('licenseRequest').addEventListener('click', () => window.desktopApi.exportLicenseRequest());
+    $('updates').addEventListener('click', () => window.desktopApi.checkUpdates());
+    $('diagnostics').addEventListener('click', () => window.desktopApi.exportDiagnostics());
+    $('diagnosticsPackage').addEventListener('click', () => window.desktopApi.exportDiagnosticsPackage());
+    window.desktopApi.onSettingsUpdated(fill);
+    window.desktopApi.getSettings().then(fill);
+  </script>
+</body>
+</html>

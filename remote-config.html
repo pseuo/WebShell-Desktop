@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>配置中心</title>
+  <style>
+    body { margin: 0; padding: 24px; color: #0f172a; background: #f8fafc; font-family: -apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif; }
+    h1 { margin: 0 0 16px; }
+    button { margin: 0 10px 14px 0; border: 0; border-radius: 12px; padding: 11px 16px; color: #fff; background: #2563eb; cursor: pointer; font-weight: 800; }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 999px; color: #fff; background: #2563eb; font-weight: 800; }
+    .feature { display: inline-flex; margin: 4px; padding: 6px 10px; border-radius: 999px; background: #e2e8f0; }
+    .feature.off { color: #991b1b; background: #fee2e2; }
+    dl { display: grid; grid-template-columns: 180px 1fr; overflow: hidden; border-radius: 16px; background: #fff; box-shadow: 0 10px 30px rgba(15,23,42,.06); }
+    dt, dd { margin: 0; padding: 12px 14px; border-bottom: 1px solid #e2e8f0; }
+    dt { color: #64748b; background: #f8fafc; }
+    pre { white-space: pre-wrap; word-break: break-all; }
+    @media (prefers-color-scheme: dark) { body { color: #e5e7eb; background: #020617; } dl { background: #0f172a; } dt { color: #94a3b8; background: #111827; } dt,dd { border-color: #1e293b; } }
+  </style>
+</head>
+<body>
+  <h1>配置中心</h1>
+  <button id="sync">同步远程配置</button>
+  <button id="refresh">刷新状态</button>
+  <dl id="info"></dl>
+  <script>
+    const labels = { url:'配置 URL', enabled:'是否启用', meta:'同步状态', features:'生效功能', rollout:'灰度信息', announcementId:'公告 ID', logLevel:'日志级别', cacheExists:'有缓存', backupExists:'有备份', config:'当前配置' };
+    function text(value, key) {
+      if (key === 'meta') return `<span class="badge">${value.source || '-'}</span><pre>${JSON.stringify(value, null, 2)}</pre>`;
+      if (key === 'features') return Object.entries(value).map(([name,on]) => `<span class="feature ${on === false ? 'off' : ''}">${name}: ${on !== false ? 'on' : 'off'}</span>`).join('');
+      if (key === 'rollout') return `<div class="badge">bucket ${value.bucket}</div><pre>${JSON.stringify(value, null, 2)}</pre>`;
+      return typeof value === 'object' ? `<pre>${JSON.stringify(value, null, 2)}</pre>` : String(value ?? '-');
+    }
+    async function load() {
+      const data = await window.desktopApi.getRemoteConfigStatus();
+      document.getElementById('info').innerHTML = Object.entries(data).map(([key, value]) => `<dt>${labels[key] || key}</dt><dd>${text(value, key)}</dd>`).join('');
+    }
+    document.getElementById('sync').addEventListener('click', async () => { await window.desktopApi.fetchRemoteConfig(); load(); });
+    document.getElementById('refresh').addEventListener('click', load);
+    window.desktopApi.onRemoteConfigUpdated(load);
+    load();
+  </script>
+</body>
+</html>
